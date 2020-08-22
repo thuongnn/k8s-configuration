@@ -1,0 +1,47 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+  externalIPs:
+    - 171.244.141.239
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+spec:
+  tls:
+    - hosts: [thuongnn.tk]
+      secretName: echo-tls
+  rules:
+    - host: thuongnn.tk
+      http:
+        paths:
+          - path: /users/(.*)$
+            backend:
+              serviceName: user-service-svc
+              servicePort: 8080
+          - path: /books/(.*)$
+            backend:
+              serviceName: book-service-svc
+              servicePort: 8080
