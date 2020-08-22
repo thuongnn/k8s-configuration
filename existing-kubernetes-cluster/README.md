@@ -1,4 +1,6 @@
-## Existing Kubernetes cluster
+# Existing Kubernetes cluster
+
+## Setup Gitlab environments
 If you have an existing Kubernetes cluster, you can add it to a project, group, or instance. Using environments to setup k8s cluster in gitlab-ci:
 
 ![](./ci-cd-variables.png)
@@ -59,3 +61,24 @@ GitLab authenticates against Kubernetes using service tokens, which are scoped t
     ```shell script
     kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep gitlab-admin | awk '{print $1}')
     ```
+   
+## Using `gitlab-ci.yml` connect to k8s cluster
+An example `gitlab-ci.yml`:  
+```yaml
+...
+deploy_live:
+  image:
+    name: lwolf/helm-kubectl-docker
+    entrypoint: [""]
+  stage: deploy_live
+  only:
+    - master
+  before_script:
+    - kubectl config set-cluster k8s --server="$CLUSTER_ADDRESS"
+    - kubectl config set-cluster k8s --certificate-authority=$CA_AUTH_DATA
+    - kubectl config set-credentials gitlab-admin --token=$K8S_TOKEN
+    - kubectl config set-context default --cluster=k8s --user=gitlab-admin --namespace=default
+    - kubectl config use-context default
+  script:
+#   - using kubectl command here to deploy k8s 
+```
