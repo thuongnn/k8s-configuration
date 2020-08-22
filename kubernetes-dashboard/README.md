@@ -34,3 +34,6 @@ Get admin user token to login by command:
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
 ```
 
+### Step 4.
+Now, access this URL to using k8s dashboard:
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
