@@ -1,0 +1,21 @@
+global:
+  name: consul
+  domain: consul
+  datacenter: dc1
+
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  storage: 5Gi
+  storageClass: hostpath
+
+client:
+  enabled: true
+  grpc: true
+
+ui:
+  enabled: true
+
+connectInject:
+  enabled: true
+  imageEnvoy: envoyproxy/envoy:v1.13.1
